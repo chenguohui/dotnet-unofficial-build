@@ -1,4 +1,4 @@
-name: Build
+name: Build Env
 
 on:
   push:
