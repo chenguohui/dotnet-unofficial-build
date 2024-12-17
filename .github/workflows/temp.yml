@@ -36,7 +36,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          image: "ghcr.io/loongson-community/binfmt:qemu-v9.0.2-loong.20240919"
+          image: "docker.io/tonistiigi/binfmt:latest"
           platforms: loong64
 
       - name: Cache C/C++ objects
