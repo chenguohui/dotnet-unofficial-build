@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - 'v**'
+  # pull_request:
+  merge_group:
+    types: [checks_requested]
+  # allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build .NET for LoongArch64
+    runs-on: NET9  # ubuntu-latest is too small for the build to finish in 6hr
+    outputs:
+      run_id: ${{ github.run_id }}
+    container:
+      image: ghcr.io/jabyn1031/loongson-build-1212:1.0
+      options: --init  # to take care of msbuild & roslyn build server processes
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_TOKEN }}
+      env:
+        BUILD_CONFIG: _config.ci.sh
+        CCACHE_DIR: /tmp/ccache
+        ROOTFS_GLIBC_DIR: /tmp/rootfs
+        ROOTFS_MUSL_DIR: /tmp/rootfs-musl
+        OUT_DIR: /tmp/out
+
+    steps:
+      - name: Check out myself
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: "ghcr.io/loongson-community/binfmt:qemu-v9.0.2-loong.20240919"
+          platforms: loong64
+
+      - name: Cache C/C++ objects
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-dotnet9-r1
+          path: |
+            /tmp/ccache
