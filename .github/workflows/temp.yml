@@ -45,3 +45,16 @@ jobs:
           key: ${{ runner.os }}-dotnet9-r1
           path: |
             /tmp/ccache
+
+      - name: Temp Test
+        run: | 
+          mkdir /home/test
+          cd /home/test
+          echo "Test Debian"
+          wget -q ftp://10.140.38.221/pub/dotnet/loongarch64/sdk-v9.0.100/abi2.0/dotnet-sdk-9.0.100-linux-loongarch64.tar.gz
+          tar -xf dotnet-sdk-9.0.100-linux-loongarch64.tar.gz
+          ./dotnet --info || echo "Debian Test Failed!"
+          rm -rf ./*
+          wget -q ftp://10.140.38.221/pub/dotnet/loongarch64/sdk-v9.0.100/dotnet-sdk-9.0.100-linux-loongarch64.tar.gz
+          tar -xf dotnet-sdk-9.0.100-linux-loongarch64.tar.gz
+          ./dotnet --info || echo "LA Test Failed!"
