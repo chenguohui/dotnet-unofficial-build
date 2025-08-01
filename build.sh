@@ -83,6 +83,7 @@ main() {
         provision_loong_rootfs "$ROOTFS_MUSL_IMAGE_TAG" "$ROOTFS_MUSL_DIR"
     fi
 
+    prepare_tools
     prepare_sources
 
     prepare_vmr_stage1 "$DOTNET_VMR_CHECKOUT"

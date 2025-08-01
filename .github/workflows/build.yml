@@ -12,8 +12,8 @@ on:
 
 jobs:
   build:
-    name: Build .NET for LoongArch64
-    runs-on: loongson-community-runners  # ubuntu-latest is too small for the build to finish in 6hr
+    name: Build .NET 10 for LoongArch64
+    runs-on: ubuntu-latest  # ubuntu-latest is too small for the build to finish in 6hr
     outputs:
       run_id: ${{ github.run_id }}
     container:
@@ -42,7 +42,7 @@ jobs:
       - name: Cache C/C++ objects
         uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-dotnet9-r1
+          key: ${{ runner.os }}-dotnet10
           path: |
             /tmp/ccache
 

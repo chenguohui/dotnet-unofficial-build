@@ -8,7 +8,7 @@ ROOTFS_GLIBC_IMAGE_TAG="ghcr.io/loongson-community/dotnet-unofficial-build-rootf
 ROOTFS_MUSL_IMAGE_TAG="ghcr.io/loongson-community/dotnet-unofficial-build-rootfs:95f50458d71c-20241122T091814Z-musl"
 
 DOTNET_VMR_BRANCH="main-9.x-loong"
-DOTNET_VMR_REPO=https://github.com/loongson-community/dotnet.git
+DOTNET_VMR_REPO=https://github.com/chenguohui/dotnet.git
 
 # For the dotnet build system
 # see https://github.com/dotnet/runtime/issues/35727 (not working in source build though)

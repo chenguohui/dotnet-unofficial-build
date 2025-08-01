@@ -61,6 +61,7 @@ provision_loong_rootfs() {
         return
     fi
 
+    echo docker pull --platform="$platform" "$tag"
     docker pull --platform="$platform" "$tag"
     container_id="$(docker create --platform="$platform" "$tag" /bin/true)"
     echo "temp container ID is $(_term green)${container_id}$(_term reset)"
@@ -72,6 +73,7 @@ provision_loong_rootfs() {
     popd > /dev/null || return
 
     docker rm "$container_id"
+    docker rmi "$tag"
 
     endgroup
 }
@@ -96,6 +98,10 @@ _do_checkout() {
         "$dest"
     )
     git clone "${git_clone_args[@]}"
+}
+
+prepare_tools() {
+    apt install cpio
 }
 
 prepare_sources() {
@@ -145,7 +151,6 @@ build_vmr_stage1() {
         -so
         --clean-while-building
         -c "$BUILD_CFG"
-        -v detailed
         /p:PortableBuild=true
     )
     # CI=true interferes with dotnet/aspire's build
@@ -153,11 +158,10 @@ build_vmr_stage1() {
     CI='' ./build.sh "${args[@]}"
 
     _detect_built_version artifacts/assets/Release
-    mv artifacts/assets/Release/*.tar.* "$OUT_DIR"/
+    mv artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
+    mv artifacts/assets/Release/Sdk/*/dotnet-sdk-*.tar.gz "$OUT_DIR"/
 
-    local feed_dir="$OUT_DIR/sdk-feed-stage1"
-    mkdir -p "$feed_dir"
-    mv artifacts/assets/Release/* "$feed_dir"/
+    ls -lh "$OUT_DIR"
 
     popd > /dev/null || return
     endgroup
@@ -238,7 +242,6 @@ build_vmr_stage2() {
         -so
         --clean-while-building
         -c "$BUILD_CFG"
-        -v detailed
         --with-sdk "$_SB_ARTIFACTS_DIR"/sdk
         --with-packages "$_SB_ARTIFACTS_DIR"/pkg
         --target-rid "$target_rid"
@@ -251,11 +254,10 @@ build_vmr_stage2() {
     # see https://github.com/dotnet/dotnet/blob/v9.0.0-rc.1.24431.7/src/aspire/Directory.Build.targets#L18
     CI='' ./build.sh "${args[@]}"
 
-    mv artifacts/assets/Release/*.tar.* "$OUT_DIR"/
+    mv artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
+    mv artifacts/assets/Release/Sdk/dotnet-sdk-*.tar.gz "$OUT_DIR"/
 
-    local feed_dir="$OUT_DIR/sdk-feed-stage2-$target_rid"
-    mkdir -p "$feed_dir"
-    mv artifacts/assets/Release/* "$feed_dir"/
+    ls -lh "$OUT_DIR"
 
     popd > /dev/null || return
     endgroup

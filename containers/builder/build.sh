@@ -12,6 +12,7 @@ PACKAGES=(
     clang-19
     lld-19
     llvm-19
+    cpio
 
     # PowerShell install deps
     apt-transport-https
