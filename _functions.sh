@@ -145,7 +145,6 @@ build_vmr_stage1() {
         -so
         --clean-while-building
         -c "$BUILD_CFG"
-        -v detailed
         /p:PortableBuild=true
     )
     # CI=true interferes with dotnet/aspire's build
@@ -238,7 +237,6 @@ build_vmr_stage2() {
         -so
         --clean-while-building
         -c "$BUILD_CFG"
-        -v detailed
         --with-sdk "$_SB_ARTIFACTS_DIR"/sdk
         --with-packages "$_SB_ARTIFACTS_DIR"/pkg
         --target-rid "$target_rid"
