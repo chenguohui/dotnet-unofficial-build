@@ -102,6 +102,7 @@ _do_checkout() {
 
 prepare_tools() {
     apt install cpio
+    df -h
 }
 
 prepare_sources() {
@@ -158,9 +159,10 @@ build_vmr_stage1() {
     CI='' ./build.sh "${args[@]}"
 
     _detect_built_version artifacts/assets/Release
-    mv artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
-    mv artifacts/assets/Release/Sdk/*/dotnet-sdk-*.tar.gz "$OUT_DIR"/
+    mv -v artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
+    mv -v artifacts/assets/Release/Sdk/*/dotnet-sdk-*.tar.gz "$OUT_DIR"/
 
+    echo $PWD
     ls -lh "$OUT_DIR"
 
     popd > /dev/null || return
@@ -198,11 +200,11 @@ unpack_sb_artifacts() {
     mkdir pkg sdk
 
     pushd pkg > /dev/null || return
-    tar xf "$OUT_DIR"/Private.SourceBuilt.Artifacts."$_BUILT_VERSION"."$BUILD_RID".tar.*
+    tar xf "$OUT_DIR"/Private.SourceBuilt.Artifacts."$_BUILT_VERSION"."$BUILD_RID".tar.gz
     popd > /dev/null || return
 
     pushd sdk > /dev/null || return
-    tar xf "$OUT_DIR"/dotnet-sdk-"$_SDK_VERSION"-"$BUILD_RID".tar.*
+    tar xf "$OUT_DIR"/dotnet-sdk-"$_SDK_VERSION"-"$BUILD_RID".tar.gz
     popd > /dev/null || return
 
     popd > /dev/null || return
@@ -254,9 +256,10 @@ build_vmr_stage2() {
     # see https://github.com/dotnet/dotnet/blob/v9.0.0-rc.1.24431.7/src/aspire/Directory.Build.targets#L18
     CI='' ./build.sh "${args[@]}"
 
-    mv artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
-    mv artifacts/assets/Release/Sdk/dotnet-sdk-*.tar.gz "$OUT_DIR"/
+    mv -v artifacts/assets/Release/Private.SourceBuilt.Artifacts.*.tar.gz "$OUT_DIR"/
+    mv -v artifacts/assets/Release/Sdk/dotnet-sdk-*.tar.gz "$OUT_DIR"/
 
+    echo $PWD
     ls -lh "$OUT_DIR"
 
     popd > /dev/null || return
